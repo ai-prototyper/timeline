@@ -1,0 +1,23 @@
+[
+    { "name": "Prehistory", "color": "#FFA07A", "start": -5000, "end": -3000, "parent": null },
+    { "name": "Stone Age", "color": "#FFB6C1", "start": -5000, "end": -3300, "parent": "Prehistory" },
+    { "name": "Bronze Age", "color": "#FFA07A", "start": -3300, "end": -3000, "parent": "Prehistory" },
+    { "name": "Ancient History", "color": "#7CCF7C", "start": -3000, "end": 476, "parent": null },
+    { "name": "Early Antiquity", "color": "#60A460", "start": -3000, "end": -1000, "parent": "Ancient History" },
+    { "name": "Classical Antiquity", "color": "#447944", "start": -1000, "end": 476, "parent": "Ancient History" },
+    { "name": "Middle Ages", "color": "#87CEFA", "start": 476, "end": 1453, "parent": null },
+    { "name": "Early Middle Ages", "color": "#6BA4C7", "start": 476, "end": 1000, "parent": "Middle Ages" },
+    { "name": "High Middle Ages", "color": "#4F7A94", "start": 1000, "end": 1300, "parent": "Middle Ages" },
+    { "name": "Late Middle Ages", "color": "#335061", "start": 1300, "end": 1453, "parent": "Middle Ages" },
+    { "name": "Early Modern Period", "color": "#DDA0DD", "start": 1453, "end": 1750, "parent": null },
+    { "name": "Renaissance", "color": "#BB85BB", "start": 1453, "end": 1600, "parent": "Early Modern Period" },
+    { "name": "Age of Discovery", "color": "#996A99", "start": 1600, "end": 1720, "parent": "Early Modern Period" },
+    { "name": "Age of Enlightenment", "color": "#774F77", "start": 1720, "end": 1750, "parent": "Early Modern Period" },
+    { "name": "Late Modern Period", "color": "#E4D184", "start": 1750, "end": 1945, "parent": null },
+    { "name": "Industrial Revolution", "color": "#D6C775", "start": 1750, "end": 1850, "parent": "Late Modern Period" },
+    { "name": "Age of Imperialism", "color": "#BCAC5E", "start": 1850, "end": 1914, "parent": "Late Modern Period" },
+    { "name": "World Wars", "color": "#A29147", "start": 1914, "end": 1945, "parent": "Late Modern Period" },
+    { "name": "Contemporary History", "color": "#20B2AA", "start": 1945, "end": 2023, "parent": null },
+    { "name": "Cold War", "color": "#1A958E", "start": 1945, "end": 1991, "parent": "Contemporary History" },
+    { "name": "Information Age", "color": "#147873", "start": 1991, "end": 2023, "parent": "Contemporary History" }
+]
