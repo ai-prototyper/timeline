@@ -10,7 +10,7 @@ const Popup = ({ content, position, type }) => {
       return `${year} CE`;
     }
   };
-
+//blah
   return (
     <div style={{
       position: 'absolute',
@@ -60,19 +60,20 @@ const Popup = ({ content, position, type }) => {
 };
 
 const MultiLevelHierarchicalTimeline = () => {
-  const totalStart = -5000;
+  const totalStart = -10000;
   const totalEnd = 2023;
-  const totalTimeRange = 2023 - (-5000);
+  const totalTimeRange = totalEnd - totalStart; // This will now be 12023
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [selectedParent, setSelectedParent] = useState(null);
-  const [timelineStart, setTimelineStart] = useState(totalStart);
-  const [timelineEnd, setTimelineEnd] = useState(totalEnd);
+  const [selectedParent] = useState(null);
+  const [timelineStart, setTimelineStart] = useState(-5000);
+  const [timelineEnd, setTimelineEnd] = useState(2000);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const timelineRef = useRef(null);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [sliderPosition, setSliderPosition] = useState(0);
-  const [hoveredAdditionalData, setHoveredAdditionalData] = useState(null);
+  const sliderPosition = useMemo(() => {
+    return ((timelineStart - totalStart) / totalTimeRange) * 100;
+  }, [timelineStart, totalStart, totalTimeRange]);  
   const [selectedEventId, setSelectedEventId] = useState(null);
 
 
@@ -84,8 +85,8 @@ const MultiLevelHierarchicalTimeline = () => {
 
   const handleWidth = useMemo(() => {
     const visibleRange = timelineEnd - timelineStart;
-    return Math.max((visibleRange / totalTimeRange) * 100, 1); // Ensure minimum width of 1%
-  }, [timelineStart, timelineEnd]);
+    return Math.max((visibleRange / totalTimeRange) * 100, 1);
+  }, [timelineStart, timelineEnd, totalTimeRange]);
 
   const formatYear = (year) => {
     if (year < 0) {
@@ -99,23 +100,21 @@ const MultiLevelHierarchicalTimeline = () => {
     // Limit the maximum position to prevent sliding off the right side
     const maxPosition = 100 - handleWidth;
     newPosition = Math.max(0, Math.min(newPosition, maxPosition));
-
+  
     let newStart = totalStart + (newPosition / 100) * totalTimeRange;
     const visibleRange = timelineEnd - timelineStart;
     let newEnd = newStart + visibleRange;
-
+  
     // Prevent scrolling beyond the timeline end
     if (newEnd > totalEnd) {
       newEnd = totalEnd;
       newStart = newEnd - visibleRange;
-      // Recalculate position based on the adjusted newStart
-      newPosition = ((newStart - totalStart) / totalTimeRange) * 100;
     }
-
+  
     setTimelineStart(newStart);
     setTimelineEnd(newEnd);
-    setSliderPosition(newPosition);
-  }, [timelineStart, timelineEnd, handleWidth]);
+  }, [timelineStart, timelineEnd, handleWidth, totalStart, totalTimeRange]);
+
 
   const handleMouseDown = useCallback((e) => {
     const sliderRect = sliderRef.current.getBoundingClientRect();
@@ -189,26 +188,14 @@ const MultiLevelHierarchicalTimeline = () => {
     if (year < timelineStart) return 0;
     if (year > timelineEnd) return 100;
     return ((year - timelineStart) / (timelineEnd - timelineStart)) * 100;
-  }, [timelineStart, timelineEnd, isAnimating]);
+  }, [timelineStart, timelineEnd]);
+
 
   const handlePeriodClick = (period) => {
     setTimelineStart(period.start);
     setTimelineEnd(period.end);
     if (timelineRef.current) {
       timelineRef.current.scrollLeft = 0;
-    }
-  };
-
-  const handleBackClick = () => {
-    const parentPeriod = periods.find(period => period.name === selectedParent)?.parent;
-    setSelectedParent(parentPeriod || null);
-    if (parentPeriod) {
-      const parentPeriodObj = periods.find(period => period.name === parentPeriod);
-      setTimelineStart(parentPeriodObj.start);
-      setTimelineEnd(parentPeriodObj.end);
-    } else {
-      setTimelineStart(-5000);
-      setTimelineEnd(2023);
     }
   };
 
@@ -302,7 +289,6 @@ const MultiLevelHierarchicalTimeline = () => {
 
     // Update slider position
     const newSliderPosition = ((newStart - totalStart) / totalTimeRange) * 100;
-    setSliderPosition(newSliderPosition);
 
     setTimeout(() => setIsAnimating(false), 300);
   };
@@ -413,13 +399,10 @@ const MultiLevelHierarchicalTimeline = () => {
     },
     eventLabel: {
       position: 'absolute',
-      whiteSpace: 'normal',
-      fontSize: '10px',
+      width: '120px',
+      fontSize: '9px',
       lineHeight: '1.2',
       textAlign: 'center',
-      width: '100px',
-      left: '50%',
-      transform: 'translateX(-50%)',
     },
     periodBar: {
       height: '30px',
@@ -511,13 +494,6 @@ const MultiLevelHierarchicalTimeline = () => {
       width: '1px',
       height: '15px',
       backgroundColor: '#333',
-    },
-    eventLabel: {
-      position: 'absolute',
-      width: '120px',
-      fontSize: '9px',
-      lineHeight: '1.2',
-      textAlign: 'center',
     },
     sliderContainer: {
     width: '100%',
@@ -802,9 +778,7 @@ const MultiLevelHierarchicalTimeline = () => {
         const latestEvent = cluster.events.reduce((max, event) => event.year > max.year ? event : max);
 
         const earliestKey = `event-${earliestEvent.id || `${earliestEvent.year}-${earliestEvent.event.replace(/\s+/g, '-')}`}`;
-        const latestKey = `event-${latestEvent.id || `${latestEvent.year}-${latestEvent.event.replace(/\s+/g, '-')}`}`;
         const isEarliestSelected = earliestKey === selectedEventId;
-        const isLatestSelected = latestKey === selectedEventId;
 
         const startPosition = getPosition(earliestEvent.year);
         const endPosition = getPosition(latestEvent.year);
@@ -854,13 +828,13 @@ const MultiLevelHierarchicalTimeline = () => {
             {/* Start label */}
             <div
               style={{
-    ...eventLabelStyle,
-    top: isWhiskerUp ? '-55px' : '37px',
-    left: 0,
-    transform: 'translateX(-50%)',
-    backgroundColor: isEarliestSelected ? '#ffeeee' : 'white',
-    border: isEarliestSelected ? '1px solid #ff0000' : 'none',
-  }}
+                ...eventLabelStyle,
+                top: isWhiskerUp ? '-55px' : '37px',
+                left: 0,
+                transform: 'translateX(-50%)',
+                backgroundColor: isEarliestSelected ? '#ffeeee' : 'white',
+                border: isEarliestSelected ? '1px solid #ff0000' : 'none',
+              }}
               onClick={() => handleEventClick(earliestEvent)}
               onMouseEnter={(e) => { handleMouseEnter(earliestEvent, e, 'event'); handleLabelHover(e); }}
               onMouseLeave={handleMouseLeave}
@@ -893,7 +867,6 @@ const MultiLevelHierarchicalTimeline = () => {
           </div>
         );
       }
-      isWhiskerUp = !isWhiskerUp; // Flip for next event
     });
   };
 
@@ -1009,4 +982,3 @@ const MultiLevelHierarchicalTimeline = () => {
 };
 
 export default MultiLevelHierarchicalTimeline;
-

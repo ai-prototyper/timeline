@@ -1,6 +1,6 @@
 [
-    { "name": "Prehistory", "color": "#FFA07A", "start": -5000, "end": -3000, "parent": null },
-    { "name": "Stone Age", "color": "#FFB6C1", "start": -5000, "end": -3300, "parent": "Prehistory" },
+    { "name": "Prehistory", "color": "#FFA07A", "start": -10000, "end": -3000, "parent": null },
+    { "name": "Stone Age", "color": "#FFB6C1", "start": -10000, "end": -3300, "parent": "Prehistory" },
     { "name": "Bronze Age", "color": "#FFA07A", "start": -3300, "end": -3000, "parent": "Prehistory" },
     { "name": "Ancient History", "color": "#7CCF7C", "start": -3000, "end": 476, "parent": null },
     { "name": "Early Antiquity", "color": "#60A460", "start": -3000, "end": -1000, "parent": "Ancient History" },
